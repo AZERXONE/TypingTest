@@ -26,20 +26,22 @@
     include("database.php");
 
     if(isset($_POST["usernamee"]) and isset($_POST["emaill"]) and isset($_POST["pwdd"])){
+        //PHP form adatai kimentése
         $username = $_POST["usernamee"];
         $mail = $_POST["emaill"];
         $pwd = $_POST["pwdd"];
+        //Jelszó hashelés bycript algoritmussal
         $pwd = password_hash($pwd, PASSWORD_DEFAULT);
         $currentDate = date("Y-m-d");
-
+        //Email és Felhasználónév egyediségének vizsgálata
         $sql = "SELECT * FROM USERS WHERE EMAIL = '$mail' OR USERNAME = '$username'";
         $result = mysqli_query($conn, $sql);
-
+        //Userek sorbarendezése későbbi ID megadása miatt
         $ssql = "SELECT * FROM USERS ORDER BY ID DESC";
         $rresult = mysqli_query($conn, $ssql);
         $rres = mysqli_fetch_assoc($rresult);
         
-
+        
         if(mysqli_num_rows($result) < 1){
             $query = "INSERT INTO users(ID, USERNAME, EMAIL, PWD, USER_DATE) VALUES (".$rres["ID"]." + 1,'$username', '$mail', '$pwd','$currentDate');";
             mysqli_query($conn, $query);
@@ -52,10 +54,7 @@
             $_SESSION["userdate"] = $res["USER_DATE"];
             $_SESSION["userid"] = $res["ID"];
             $_SESSION["testnum"] = 0;
-            $_SESSION["bestwpm"] = 0;
-            $_SESSION["bestacc"] = 0;
-            $_SESSION["avgacc"] = 0;
-            $_SESSION["avgwpm"] = 0;
+
             header("Location: login.php");
         }
         else {
